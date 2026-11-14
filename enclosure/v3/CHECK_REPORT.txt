@@ -1,0 +1,40 @@
+Voice satellite V3 enclosure - geometric checks of the CAD model (never printed)
+
+[integrity] shell_black: 1 solid(s), valid=True
+[integrity] shell_band_clear: 1 solid(s), valid=True
+[integrity] base_plate: 1 solid(s), valid=True
+[integrity] chamber_gasket_TPU: 1 solid(s), valid=True
+[integrity] speaker_gasket_TPU: 1 solid(s), valid=True
+[integrity] mic_gasket_TPU: 1 solid(s), valid=True
+[integrity] feet_TPU: 4 solid(s), valid=True
+[collisions] unexpected overlaps: []
+[keepout] esp32_module <-> shell_band_clear: 0.18 mm (must-measure)
+[keepout] usbc <-> shell_black: 0.10 mm (must-measure)
+[keepout] pcb_parts <-> shell_black: 0.10 mm (must-measure)
+[keepout] usb_plug_keepout <-> shell_black: 0.30 mm (must-measure)
+[keepout] usb_plug_keepout <-> base_plate: 0.30 mm (must-measure)
+[keepout] spk_cable_keepout <-> shell_black: 0.10 mm (must-measure)
+[seal] gasket volume 407.9 mm3, groove volume 441.4, fill 75 % (target 75-85)
+[seal] rib proud below the rim face: 78.8 mm3 (0.50 mm proud -> squeezed to the hard stop on the PCB)
+[seal] rim footprint on the PCB: 100 % of the rim sits over the PCB (want 100)
+[seal] corner screw hole at (12.1,9.9) to groove: 40.91 mm (>=1.5)
+[seal] corner screw hole at (103.1,9.9) to groove: 3.84 mm (>=1.5)
+[seal] corner screw hole at (103.1,72.9) to groove: 3.84 mm (>=1.5)
+[seal] corner screw hole at (12.1,49.9) to groove: 40.40 mm (>=1.5)
+[assembly] shell sweep over base/PCB/parts: max overlap 0.00 mm3 (0 = free path)
+[assembly] speaker drop-in path through the chamber: max overlap 0.00 mm3
+[tool] iron to mic insert -1: clearance to shell 0.20 mm
+[tool] iron to mic insert 1: clearance to shell 0.20 mm
+[tool] iron to speaker insert (62,25): clearance 0.20 mm
+[tool] iron to speaker insert (62,57): clearance 0.20 mm
+[tool] iron to speaker insert (94,25): clearance 0.20 mm
+[tool] iron to speaker insert (94,57): clearance 0.20 mm
+[print] shell_black: watertight=True, flagged overhang clusters (short span > 8 mm): [(np.float64(80.2), 48.5, [np.float64(-56.5), np.float64(-40.1)]), (np.float64(66.4), 36.5, [np.float64(-49.6), np.float64(-33.2)]), (np.float64(67.4), 36.0, [np.float64(-50.1), np.float64(-33.7)]), (np.float64(68.4), 35.5, [np.float64(-50.6), np.float64(-34.2)]), (np.float64(69.4), 35.0, [np.float64(-51.1), np.float64(-34.7)]), (np.float64(70.4), 34.5, [np.float64(-51.6), np.float64(-35.2)])]
+[print] shell_band_clear: watertight=True, flagged overhang clusters (short span > 8 mm): []
+[print] base_plate: watertight=True, flagged overhang clusters (short span > 8 mm): []
+[print] chamber_gasket_TPU: watertight=True, flagged overhang clusters (short span > 8 mm): []
+[print] speaker_gasket_TPU: watertight=True, flagged overhang clusters (short span > 8 mm): []
+[print] mic_gasket_TPU: watertight=True, flagged overhang clusters (short span > 8 mm): []
+[print] feet_TPU: watertight=True, flagged overhang clusters (short span > 8 mm): []
+[acoustics] chamber gross volume 88 cm3, minus speaker 69 cm3
+[size] case 113.0 x 80.20000000000002 x 54.0 mm (+3 mm feet); V2 was 111.2 x 85.6 x 51.4 + plinth/feet

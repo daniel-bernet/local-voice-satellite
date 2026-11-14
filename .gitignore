@@ -1,0 +1,7 @@
+# generated working files
+build/
+__pycache__/
+*.pyc
+.esphome/
+# never commit real secrets
+secrets.yaml

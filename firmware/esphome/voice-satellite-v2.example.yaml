@@ -1,0 +1,404 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Daniel Bernet
+# =============================================================================
+# Voice Satellite V2 (hand-wired) - ESPHome example config
+#   ESP32-S3 N16R8 devkit + INMP441 mic + MAX98357A amp + 40x WS2812B strip, USB-C PD trigger (5 V)
+#
+# Sanitised copy of the config running on the hand-wired satellite: every secret is a !secret
+# (see secrets.example.yaml), device names are neutral, network addresses removed.
+# Hardware this config assumes (details: hardware/v2/README.md):
+#   Mic INMP441 (I2S 0)   : SCK GPIO4, WS GPIO5, SD GPIO6, L/R tied to GND (left channel)
+#   Amp MAX98357A (I2S 1) : BCLK GPIO15, LRC GPIO16, DIN GPIO17, SD (shutdown) GPIO7 + 10 kOhm to GND
+#   LED strip             : GPIO14 -> 330 Ohm -> DIN (3.3 V data, no level shifter) + 10 kOhm GPIO14 to GND
+#                           strip 5 V/GND straight from the PD board, 1000 uF at the strip input
+# =============================================================================
+substitutions:
+  name: "voice-satellite-v2"
+  friendly_name: "Voice Satellite V2"
+
+  # --- LED look: warm amber. WS2812 green is very strong, so green is kept low to get orange instead of yellow.
+  amber_r: "100%"
+  amber_g: "37%"
+  amber_b: "6%"
+
+  # --- Stage timeouts (seconds): the LEDs always fall back to idle after these.
+  listen_timeout_s: "15"     # wake word -> end of speech
+  think_timeout_s: "45"      # end of speech -> first answer (local LLM can be slow)
+  respond_timeout_s: "120"   # answer playing (long answers)
+  pipeline_timeout_s: "180"  # hard limit for one whole voice interaction
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  on_boot:
+    priority: -100
+    then:
+      - switch.turn_off: amp_enable
+      - script.execute: led_idle
+
+esp32:
+  variant: esp32s3
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+
+# CRITICAL: required for micro_wake_word (the N16R8 module has 8 MB octal PSRAM)
+psram:
+  mode: octal
+  speed: 80MHz
+
+logger:
+  baud_rate: 115200
+  level: DEBUG
+
+api:
+  encryption:
+    key: !secret api_encryption_key       # 32-byte base64 key, generate one per device
+  on_client_connected:
+    - delay: 100ms
+    - micro_wake_word.start:
+    - script.execute: led_idle
+  on_client_disconnected:
+    - micro_wake_word.stop:
+    - voice_assistant.stop:
+    - script.execute: led_disconnected
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  power_save_mode: none     # keeps audio streaming smooth
+
+# ---------------------------------------------------------------------------
+# Audio
+# ---------------------------------------------------------------------------
+# I2S Bus 0 (Microphone)
+i2s_audio:
+  - id: i2s_in
+    i2s_lrclk_pin: GPIO5
+    i2s_bclk_pin: GPIO4
+
+  # I2S Bus 1 (Speaker)
+  - id: i2s_out
+    i2s_lrclk_pin: GPIO16
+    i2s_bclk_pin: GPIO15
+
+microphone:
+  - platform: i2s_audio
+    id: mic
+    i2s_audio_id: i2s_in
+    adc_type: external
+    i2s_din_pin: GPIO6
+    pdm: false
+    channel: left
+
+speaker:
+  - platform: i2s_audio
+    id: spk
+    i2s_audio_id: i2s_out
+    dac_type: external
+    i2s_dout_pin: GPIO17
+    buffer_duration: 800ms
+    timeout: 1s          # keep the I2S clock running a bit after playback: the amp is switched off first
+
+media_player:
+  - platform: speaker
+    id: mp
+    name: "${friendly_name} Speaker"
+    task_stack_in_psram: true
+    buffer_size: 2000000
+    announcement_pipeline:
+      speaker: spk
+    # Amplifier power gating: on as soon as anything plays, off shortly after it goes idle.
+    on_announcement:
+      - script.stop: amp_off_later
+      - switch.turn_on: amp_enable
+    on_play:
+      - script.stop: amp_off_later
+      - switch.turn_on: amp_enable
+    on_idle:
+      - script.execute: amp_off_later
+      - if:
+          condition:
+            lambda: 'return id(led_phase) == 3;'
+          then:
+            - script.execute: led_idle
+
+# MAX98357A SD (shutdown) pin: LOW = amp off (no hiss, no crackle), HIGH (3.3 V) = amp on, left channel.
+# The 10 kOhm pull-down keeps the amp off while the ESP32 boots.
+switch:
+  - platform: gpio
+    id: amp_enable
+    name: "${friendly_name} Amplifier"
+    pin: GPIO7
+    restore_mode: ALWAYS_OFF
+    internal: true
+
+micro_wake_word:
+  id: mww
+  models:
+    - model: hey_jarvis
+  on_wake_word_detected:
+    - logger.log: "Wake word detected"
+    - script.execute: led_listening
+    - voice_assistant.start:
+        wake_word: !lambda return wake_word;
+
+voice_assistant:
+  id: va
+  microphone: mic
+  media_player: mp          # the media player owns all audio -> one place to gate the amp
+  use_wake_word: false
+  on_listening:
+    - script.execute: led_listening
+  on_stt_vad_end:            # user stopped talking -> loading circle
+    - script.execute: led_thinking
+  on_stt_end:                # fallback if VAD end was not reported
+    - if:
+        condition:
+          lambda: 'return id(led_phase) == 1;'
+        then:
+          - script.execute: led_thinking
+  on_tts_start:              # answer text is ready, audio follows -> glow
+    - script.execute: led_responding   # amp is switched by the media player itself (on_announcement)
+  on_end:
+    - script.execute: amp_off_later    # safety net: amp off if nothing is playing
+    - script.execute: respond_guard    # TTS failed to play -> don't glow for 120 s
+    - if:                    # no answer audio (e.g. nothing understood) -> back to idle now
+        condition:
+          lambda: 'return id(led_phase) == 1 || id(led_phase) == 2;'
+        then:
+          - script.execute: led_idle
+    - delay: 100ms
+    - micro_wake_word.start:
+  on_error:
+    - script.execute: amp_off_later
+    - logger.log:
+        format: "Voice assistant error %s: %s"
+        args: [ 'code.c_str()', 'message.c_str()' ]
+    - script.execute: led_error
+    - delay: 100ms
+    - micro_wake_word.start:
+
+# ---------------------------------------------------------------------------
+# LED ring in the plinth: 144 LED/m strip, 40 LEDs, GPIO14 -> 330 Ohm -> DIN (direct, 3.3 V data)
+# ---------------------------------------------------------------------------
+light:
+  - platform: esp32_rmt_led_strip
+    id: ring
+    name: "${friendly_name} Ring"
+    pin: GPIO14
+    num_leds: 40
+    chipset: ws2812
+    channel_colors: GRB
+    restore_mode: ALWAYS_OFF
+    default_transition_length: 300ms
+    # Hard power cap. Every pixel write is scaled by this, including the lambda effects and
+    # 100 % brightness requests from Home Assistant: full white = 40 x 60 mA x 0.6 = ~1.4 A
+    # instead of 2.4 A. Budget at 5 V/3 A: LEDs 1.4 + amp peaks ~0.8 + ESP32 ~0.4 A.
+    color_correct: [60%, 60%, 60%]
+    effects:
+      # Listening: slow, calm breathing
+      - pulse:
+          name: "Breathe"
+          transition_length: 1.4s
+          update_interval: 1.4s
+          min_brightness: 20%
+          max_brightness: 100%
+      # Thinking: a comet with a fading tail runs around the plinth (~1 turn per 1.3 s)
+      - addressable_lambda:
+          name: "Thinking"
+          update_interval: 16ms
+          lambda: |-
+            static float head = 0.0f;
+            const int n = it.size();
+            const float speed = n / (1.3f / 0.016f);   // LEDs per frame
+            const float tail = n * 0.35f;              // tail length in LEDs
+            if (initial_run) head = 0.0f;
+            head = fmodf(head + speed, (float) n);
+            for (int i = 0; i < n; i++) {
+              float d = head - i;
+              if (d < 0) d += n;                        // distance behind the head
+              float k = (d < tail) ? 1.0f - d / tail : 0.0f;
+              k = k * k;                                // smooth quadratic fade
+              uint8_t r = current_color.r * k;
+              uint8_t g = current_color.g * k;
+              uint8_t b = current_color.b * k;
+              if (d < 1.0f) {                           // head: a touch brighter/whiter
+                r = 255; g = std::min(255, g + 60); b = std::min(255, b + 25);
+              }
+              it[i] = Color(r, g, b);
+            }
+      # Responding: steady glow with a very slow, subtle shimmer so it feels alive
+      - addressable_lambda:
+          name: "Speaking"
+          update_interval: 30ms
+          lambda: |-
+            static float t = 0.0f;
+            t += 0.03f;
+            const int n = it.size();
+            for (int i = 0; i < n; i++) {
+              float phase = t * 1.6f + i * (6.2832f / n) * 2.0f;
+              float k = 0.85f + 0.15f * sinf(phase);  // 70..100 % brightness ripple
+              it[i] = Color(current_color.r * k, current_color.g * k, current_color.b * k);
+            }
+
+# ---------------------------------------------------------------------------
+# State machine: 0 idle | 1 listening | 2 thinking | 3 responding | 4 error | 5 disconnected
+# Every stage arms the watchdog; if the next event never arrives, the LEDs return to idle.
+# ---------------------------------------------------------------------------
+globals:
+  - id: led_phase
+    type: int
+    initial_value: '0'
+
+script:
+  - id: led_listening
+    mode: restart
+    then:
+      - lambda: 'id(led_phase) = 1;'
+      - light.turn_on:
+          id: ring
+          red: ${amber_r}
+          green: ${amber_g}
+          blue: ${amber_b}
+          brightness: 100%
+          effect: "Breathe"
+      - script.execute:
+          id: led_watchdog
+          timeout_s: ${listen_timeout_s}
+      - script.execute: pipeline_watchdog
+
+  - id: led_thinking
+    mode: restart
+    then:
+      - lambda: 'id(led_phase) = 2;'
+      - light.turn_on:
+          id: ring
+          red: ${amber_r}
+          green: ${amber_g}
+          blue: ${amber_b}
+          brightness: 100%
+          effect: "Thinking"
+      - script.execute:
+          id: led_watchdog
+          timeout_s: ${think_timeout_s}
+
+  - id: led_responding
+    mode: restart
+    then:
+      - lambda: 'id(led_phase) = 3;'
+      - light.turn_on:
+          id: ring
+          red: ${amber_r}
+          green: ${amber_g}
+          blue: ${amber_b}
+          brightness: 80%
+          effect: "Speaking"
+      - script.execute:
+          id: led_watchdog
+          timeout_s: ${respond_timeout_s}
+
+  - id: led_idle
+    mode: restart
+    then:
+      - script.stop: led_watchdog
+      - lambda: 'id(led_phase) = 0;'
+      - light.turn_off:
+          id: ring
+          transition_length: 800ms
+
+  - id: led_error
+    mode: restart
+    then:
+      - script.stop: led_watchdog
+      - lambda: 'id(led_phase) = 4;'
+      - repeat:
+          count: 2
+          then:
+            - light.turn_on:
+                id: ring
+                red: 100%
+                green: 4%
+                blue: 0%
+                brightness: 70%
+                effect: "None"
+            - delay: 180ms
+            - light.turn_off:
+                id: ring
+                transition_length: 0s
+            - delay: 180ms
+      - script.execute: led_idle
+
+  - id: led_disconnected    # dim red breathing until Home Assistant reconnects
+    mode: restart
+    then:
+      - script.stop: led_watchdog
+      - lambda: 'id(led_phase) = 5;'
+      - light.turn_on:
+          id: ring
+          red: 100%
+          green: 3%
+          blue: 0%
+          brightness: 25%
+          effect: "Breathe"
+
+  # Per-stage timeout: re-armed by every stage (restart mode), fires only if a stage hangs.
+  - id: led_watchdog
+    mode: restart
+    parameters:
+      timeout_s: int
+    then:
+      - delay: !lambda 'return timeout_s * 1000;'
+      - logger.log:
+          format: "LED stage %d timed out -> idle"
+          args: [ 'id(led_phase)' ]
+          level: WARN
+      - script.execute: led_idle
+
+  # Hard limit for the whole interaction: stops a pipeline that never ends.
+  - id: pipeline_watchdog
+    mode: restart
+    then:
+      - delay: ${pipeline_timeout_s}s
+      - if:
+          condition:
+            voice_assistant.is_running:
+          then:
+            - logger.log:
+                format: "Voice pipeline exceeded ${pipeline_timeout_s}s -> stopping"
+                level: WARN
+            - voice_assistant.stop:
+            - script.execute: led_idle
+            - delay: 200ms
+            - micro_wake_word.start:
+
+  # After the pipeline ends: if we are still 'responding' but nothing is playing, go idle.
+  - id: respond_guard
+    mode: restart
+    then:
+      - delay: 3s
+      - if:
+          condition:
+            and:
+              - lambda: 'return id(led_phase) == 3;'
+              - media_player.is_idle: mp
+          then:
+            - logger.log:
+                format: "Responding but no audio -> idle"
+                level: WARN
+            - script.execute: led_idle
+
+  # Amp off shortly after playback ends (only if nothing started playing again)
+  - id: amp_off_later
+    mode: restart
+    then:
+      - delay: 400ms
+      - if:
+          condition:
+            media_player.is_idle: mp
+          then:
+            - switch.turn_off: amp_enable

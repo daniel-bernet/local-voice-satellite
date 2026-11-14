@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you build on this, a credit or a link back is appreciated. You can cite it like this."
+type: software
+title: "Local Voice Satellite"
+abstract: "A DIY ESP32-S3 voice satellite for a fully local Home Assistant voice pipeline: firmware, wiring, a parametric 3D-printed enclosure and an unverified custom PCB design, all generated as code."
+authors:
+  - family-names: Bernet
+    given-names: Daniel
+repository-code: "https://github.com/daniel-bernet/local-voice-satellite"
+url: "https://github.com/daniel-bernet/local-voice-satellite"
+license:
+  - MIT
+  - CERN-OHL-P-2.0
+  - CC-BY-4.0
+keywords:
+  - home-assistant
+  - esphome
+  - esp32-s3
+  - voice-assistant
+  - open-hardware
+  - build123d
+  - kicad

@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 780" width="1100" height="780" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="13">
+  <!-- Voice Satellite V2 (hand-wired) - wiring diagram. SPDX-License-Identifier: CERN-OHL-P-2.0  (c) 2026 Daniel Bernet -->
+  <title>Voice Satellite V2 (hand-wired) - wiring diagram</title>
+  <style>
+    .box { fill: #f7f7f5; stroke: #222; stroke-width: 2; }
+    .lbl { font-weight: bold; font-size: 15px; }
+    .sub { fill: #555; font-size: 12px; }
+    .pin { font-size: 12px; fill: #222; }
+    .w5v { stroke: #d62828; stroke-width: 3; fill: none; }
+    .wgnd { stroke: #333333; stroke-width: 3; fill: none; }
+    .w3v3 { stroke: #e76f51; stroke-width: 2.5; fill: none; stroke-dasharray: 7 3; }
+    .wmic { stroke: #2a9d8f; stroke-width: 2.5; fill: none; }
+    .wamp { stroke: #6a4c93; stroke-width: 2.5; fill: none; }
+    .wled { stroke: #2b9348; stroke-width: 2.5; fill: none; }
+    .wspk { stroke: #8d99ae; stroke-width: 3; fill: none; }
+    .dot { fill: #111; }
+    .part { fill: #fff; stroke: #111; stroke-width: 1.5; }
+    .note { fill: #444; font-size: 11.5px; }
+  </style>
+  <rect width="1100" height="780" fill="#ffffff"/>
+  <text x="30" y="40" font-size="20" font-weight="bold">Voice Satellite V2 (hand-wired) — wiring</text>
+  <text x="30" y="62" class="sub">Every module takes 5 V / GND straight from the PD board's output pads (star point), not through the devkit. GPIO numbers as printed on the devkit.</text>
+
+  <!-- rails -->
+  <line x1="220" y1="95" x2="220" y2="640" class="w5v"/>
+  <line x1="250" y1="95" x2="250" y2="640" class="wgnd"/>
+  <text x="208" y="90" class="pin" text-anchor="end" fill="#d62828">5 V</text>
+  <text x="258" y="90" class="pin">GND</text>
+
+  <!-- PD board -->
+  <rect x="20" y="230" width="160" height="150" rx="8" class="box"/>
+  <text x="100" y="254" class="lbl" text-anchor="middle">USB-C PD</text>
+  <text x="100" y="272" class="lbl" text-anchor="middle">trigger board</text>
+  <text x="100" y="315" class="sub" text-anchor="middle">set to 5 V (measure</text>
+  <text x="100" y="330" class="sub" text-anchor="middle">4.75–5.25 V first!)</text>
+  <text x="172" y="295" class="pin" text-anchor="end">VOUT+</text>
+  <text x="172" y="350" class="pin" text-anchor="end">VOUT−</text>
+  <line x1="180" y1="290" x2="220" y2="290" class="w5v"/><circle cx="220" cy="290" r="4.5" class="dot"/>
+  <line x1="180" y1="345" x2="250" y2="345" class="wgnd"/><circle cx="250" cy="345" r="4.5" class="dot"/>
+
+  <!-- ESP32-S3 devkit -->
+  <rect x="300" y="120" width="200" height="410" rx="8" class="box"/>
+  <text x="400" y="146" class="lbl" text-anchor="middle">ESP32-S3 devkit</text>
+  <text x="400" y="163" class="sub" text-anchor="middle">N16R8 · 8 MB PSRAM</text>
+  <text x="308" y="205" class="pin">5V</text>
+  <text x="308" y="235" class="pin">GND</text>
+  <text x="492" y="190" class="pin" text-anchor="end">3V3</text>
+  <text x="492" y="264" class="pin" text-anchor="end">GPIO4</text>
+  <text x="492" y="294" class="pin" text-anchor="end">GPIO5</text>
+  <text x="492" y="324" class="pin" text-anchor="end">GPIO6</text>
+  <text x="492" y="374" class="pin" text-anchor="end">GPIO15</text>
+  <text x="492" y="404" class="pin" text-anchor="end">GPIO16</text>
+  <text x="492" y="434" class="pin" text-anchor="end">GPIO17</text>
+  <text x="492" y="464" class="pin" text-anchor="end">GPIO7</text>
+  <text x="492" y="514" class="pin" text-anchor="end">GPIO14</text>
+  <text x="400" y="480" class="note" text-anchor="middle">GPIO14 sits next to the 5V pin</text>
+  <text x="400" y="495" class="note" text-anchor="middle">on the devkit header: beep-test</text>
+  <line x1="220" y1="200" x2="300" y2="200" class="w5v"/><circle cx="220" cy="200" r="4.5" class="dot"/>
+  <line x1="250" y1="230" x2="300" y2="230" class="wgnd"/><circle cx="250" cy="230" r="4.5" class="dot"/>
+
+  <!-- INMP441 -->
+  <rect x="720" y="200" width="190" height="150" rx="8" class="box"/>
+  <text x="900" y="262" class="lbl" text-anchor="end">INMP441</text>
+  <text x="900" y="279" class="sub" text-anchor="end">I²S mic · bus 0</text>
+  <text x="900" y="342" class="note" text-anchor="end">L/R bridged to GND = left</text>
+  <text x="728" y="264" class="pin">SCK</text>
+  <text x="728" y="294" class="pin">WS</text>
+  <text x="728" y="324" class="pin">SD (data out)</text>
+  <text x="760" y="220" class="pin" text-anchor="middle">VDD</text>
+  <text x="850" y="220" class="pin" text-anchor="middle">GND</text>
+  <polyline points="500,185 760,185 760,200" class="w3v3"/>
+  <text x="600" y="179" class="note">3.3 V only (5 V kills the mic)</text>
+  <polyline points="250,105 850,105 850,200" class="wgnd"/><circle cx="250" cy="105" r="4.5" class="dot"/>
+  <line x1="500" y1="260" x2="720" y2="260" class="wmic"/>
+  <line x1="500" y1="290" x2="720" y2="290" class="wmic"/>
+  <line x1="500" y1="320" x2="720" y2="320" class="wmic"/>
+  <text x="610" y="254" class="note" text-anchor="middle">BCLK</text>
+  <text x="610" y="284" class="note" text-anchor="middle">LRCLK</text>
+  <text x="610" y="314" class="note" text-anchor="middle">data in</text>
+
+  <!-- MAX98357A -->
+  <rect x="720" y="360" width="190" height="190" rx="8" class="box"/>
+  <text x="900" y="492" class="lbl" text-anchor="end">MAX98357A</text>
+  <text x="900" y="508" class="sub" text-anchor="end">I²S amp · bus 1</text>
+  <text x="900" y="523" class="note" text-anchor="end">GAIN open = 9 dB</text>
+  <text x="728" y="374" class="pin">BCLK</text>
+  <text x="728" y="404" class="pin">LRC</text>
+  <text x="728" y="434" class="pin">DIN</text>
+  <text x="728" y="464" class="pin">SD (shutdown)</text>
+  <text x="760" y="543" class="pin" text-anchor="middle">VIN</text>
+  <text x="850" y="543" class="pin" text-anchor="middle">GND</text>
+  <text x="902" y="414" class="pin" text-anchor="end">OUT+</text>
+  <text x="902" y="454" class="pin" text-anchor="end">OUT−</text>
+  <line x1="500" y1="370" x2="720" y2="370" class="wamp"/>
+  <line x1="500" y1="400" x2="720" y2="400" class="wamp"/>
+  <line x1="500" y1="430" x2="720" y2="430" class="wamp"/>
+  <line x1="500" y1="460" x2="720" y2="460" class="wamp"/>
+  <text x="600" y="454" class="note" text-anchor="middle">LOW = amp off</text>
+  <!-- R1 SD pull-down -->
+  <circle cx="680" cy="460" r="4.5" class="dot"/>
+  <line x1="680" y1="460" x2="680" y2="478" class="wamp"/>
+  <rect x="673" y="478" width="14" height="40" class="part"/>
+  <line x1="680" y1="518" x2="680" y2="560" class="wgnd"/>
+  <text x="668" y="540" class="note" text-anchor="end">R1 10 kΩ</text>
+  <!-- amp power + C2 -->
+  <polyline points="250,560 850,560 850,550" class="wgnd"/><circle cx="250" cy="560" r="4.5" class="dot"/><circle cx="680" cy="560" r="4.5" class="dot"/>
+  <polyline points="220,580 760,580 760,550" class="w5v"/><circle cx="220" cy="580" r="4.5" class="dot"/>
+  <circle cx="800" cy="580" r="4.5" class="dot"/><circle cx="800" cy="560" r="4.5" class="dot"/>
+  <line x1="800" y1="560" x2="800" y2="580" stroke="#111" stroke-width="1.5"/>
+  <rect x="790" y="565" width="20" height="10" class="part"/>
+  <text x="815" y="577" class="note">C2 470 µF at the amp pins (stripe → GND)</text>
+
+  <!-- speaker -->
+  <rect x="950" y="385" width="120" height="90" rx="8" class="box"/>
+  <text x="1010" y="420" class="lbl" text-anchor="middle">Speaker</text>
+  <text x="1010" y="438" class="sub" text-anchor="middle">40 mm driver</text>
+  <text x="1010" y="455" class="sub" text-anchor="middle">sealed chamber</text>
+  <line x1="910" y1="410" x2="950" y2="410" class="wspk"/>
+  <line x1="910" y1="450" x2="950" y2="450" class="wspk"/>
+  <text x="1010" y="495" class="note" text-anchor="middle">OUT− is NOT ground</text>
+
+  <!-- LED path -->
+  <line x1="500" y1="510" x2="560" y2="510" class="wled"/>
+  <circle cx="530" cy="510" r="4.5" class="dot"/>
+  <rect x="560" y="503" width="44" height="14" class="part"/>
+  <text x="582" y="499" class="note" text-anchor="middle">R3 330 Ω</text>
+  <polyline points="604,510 705,510 705,690 720,690" class="wled"/>
+  <line x1="530" y1="510" x2="530" y2="522" class="wled"/>
+  <rect x="523" y="522" width="14" height="26" class="part"/>
+  <line x1="530" y1="548" x2="530" y2="560" class="wgnd"/><circle cx="530" cy="560" r="4.5" class="dot"/>
+  <text x="542" y="540" class="note">R2 10 kΩ</text>
+  <polyline points="220,610 760,610 760,650" class="w5v"/><circle cx="220" cy="610" r="4.5" class="dot"/>
+  <polyline points="250,630 850,630 850,650" class="wgnd"/><circle cx="250" cy="630" r="4.5" class="dot"/>
+  <circle cx="800" cy="610" r="4.5" class="dot"/><circle cx="800" cy="630" r="4.5" class="dot"/>
+  <line x1="800" y1="610" x2="800" y2="630" stroke="#111" stroke-width="1.5"/>
+  <rect x="790" y="615" width="20" height="10" class="part"/>
+  <text x="815" y="624" class="note">C1 1000 µF, 2–3 cm before the strip</text>
+  <rect x="720" y="650" width="350" height="70" rx="8" class="box"/>
+  <text x="895" y="693" class="lbl" text-anchor="middle">WS2812B strip · 40 LEDs</text>
+  <text x="895" y="711" class="sub" text-anchor="middle">in the clear plinth · 3.3 V data, no level shifter</text>
+  <text x="760" y="668" class="pin" text-anchor="middle">5V</text>
+  <text x="850" y="668" class="pin" text-anchor="middle">GND</text>
+  <text x="726" y="694" class="pin">DIN</text>
+
+  <!-- legend -->
+  <g transform="translate(30,670)">
+    <text x="0" y="0" font-weight="bold">Legend</text>
+    <line x1="0" y1="16" x2="30" y2="16" class="w5v"/><text x="38" y="20" class="note">5 V</text>
+    <line x1="90" y1="16" x2="120" y2="16" class="wgnd"/><text x="128" y="20" class="note">GND</text>
+    <line x1="0" y1="36" x2="30" y2="36" class="w3v3"/><text x="38" y="40" class="note">3.3 V</text>
+    <line x1="90" y1="36" x2="120" y2="36" class="wmic"/><text x="128" y="40" class="note">I²S mic</text>
+    <line x1="0" y1="56" x2="30" y2="56" class="wamp"/><text x="38" y="60" class="note">I²S amp</text>
+    <line x1="90" y1="56" x2="120" y2="56" class="wled"/><text x="128" y="60" class="note">LED data</text>
+    <circle cx="215" cy="16" r="4.5" class="dot"/><text x="225" y="20" class="note">junction (crossings without a dot are not connected)</text>
+    <text x="215" y="44" class="note">Pull-downs R1/R2 keep the amp off and the LEDs dark while the ESP32 boots.</text>
+  </g>
+</svg>

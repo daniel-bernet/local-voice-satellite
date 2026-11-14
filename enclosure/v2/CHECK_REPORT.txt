@@ -1,0 +1,75 @@
+Voice satellite V2 enclosure - geometric checks of the CAD model (this version was printed and assembled)
+
+== part integrity (solids per printed part) ==
+  OK   shell                solids=1 valid=True
+  OK   base_plate           solids=1 valid=True
+  OK   plinth_PCTG          solids=1 valid=True
+  OK   chamber_gasket_TPU   solids=1 valid=True
+  OK   speaker_gasket_TPU   solids=1 valid=True
+  OK   mic_gasket_TPU       solids=1 valid=True
+  OK   feet_TPU             solids=4 valid=True
+  OK   grommet_TPU          solids=1 valid=True
+== unexpected collisions (mm^3) ==
+  OK   no unexpected collisions
+== chamber seal ==
+  OK   gasket x base plate = 0.00
+  OK   proud rib under shell material: 100.0 %  (squeeze 0.5 mm)
+       groove fill: 71 %
+  OK   groove -> screw hole >= 1.5: 2.10 mm
+  OK   groove -> base plate outer edge >= 1.4: 1.40 mm
+  OK   in-chamber screw (103.1,9.4) has its own gasket loop
+  OK   in-chamber screw (103.1,76.2) has its own gasket loop
+== speaker (top mount) ==
+  OK   flange on bosses (hard stop) distance = 0.000
+  OK   speaker gasket x shell = 0.00
+  OK   gasket rib squeezed by flange: 41.2 mm^3 (0.5 mm)
+  OK   gasket -> cone/surround: 0.30 mm
+       air gap cone -> ceiling: 2.5 mm
+  OK   hex-key paths (2 mm key, straight down) -> shell: 2.70 mm
+  OK   hex-key paths -> speaker body: 1.43 mm
+  INFO screw heads vs 40 mm body ring (modelled as a sharp cylinder): 2.05 mm^3 overlap (head reaches r 19.78, body r 20.0)
+  OK   speaker can be lowered into the chamber from the open bottom (shell upside down): 0.00
+  OK   speaker gasket can be placed the same way: 0.00
+  OK   speaker body -> base plate: 11.9 mm
+  OK   speaker -> grommet_TPU: 3.23 mm
+  OK   terminal wire band -> divider: 0.10 mm
+== mic (front wall ring, heat-staked pins) ==
+  OK   board in ring, pins in notches, no interference: 0.000 mm^3 overlap
+       notch circle r 1.04 at 7.29 mm from centre; pin d 1.7 -> 0.19 mm play per side
+  OK   port gasket squeezed: 3.85 mm^3
+  OK   melted pin heads (d 3.6) -> wires: 0.49 mm
+  OK   ring / port boss -> solder joints + wires: 0.46 mm
+  OK   board slides into the ring along the pins: 0.000
+  OK   iron (d 5 mm, 30 deg off axis) reaches both pin tips: clearance 0.61 mm
+  OK   mic board -> ESP32 module/antenna: 18.3 mm
+       mic port -> speaker centre: 61 mm, 90 deg apart
+== base-plate screws hidden by the plinth ==
+  OK   lug_front    ( 38.00,  9.00) counterbore inside plinth outline, margin 0.80 mm
+  OK   lug_divider  ( 58.40,  9.00) counterbore inside plinth outline, margin 0.80 mm
+  OK   div_back     ( 58.40, 76.60) counterbore inside plinth outline, margin 0.80 mm
+  OK   ch_front     (103.08,  9.37) counterbore inside plinth outline, margin 0.50 mm
+  OK   ch_back      (103.08, 76.23) counterbore inside plinth outline, margin 0.50 mm
+       overhang: 3.75 mm left/right, 5.00 mm front/back
+== assembly paths ==
+  OK   shell can be lowered onto the base assembly
+  OK   plinth fits up against the base plate
+== LED pass-through ==
+  OK   slot opens into the plinth core interior
+  OK   LED wires -> base_plate: 2.5 mm
+  OK   LED wires -> plinth_PCTG: 0.5 mm
+  OK   LED wires -> perfboard: 5.1 mm
+  OK   LED wires -> shell: 7.9 mm
+  OK   LED wires -> dac: 14.1 mm
+== clearances ==
+  OK   wroom_module -> shell: 4.85 mm (>= 4.5)
+  OK   dac_terminal -> shell: 4.50 mm (>= 3.9)
+  OK   devkit_usbc -> shell: 4.80 mm (>= 0.5)
+       perfboard -> base_plate: 0.00 mm
+       speaker -> shell: 0.00 mm
+  OK   hw398_usbc -> base_plate: 0.30 mm (>= 0.2)
+== screw engagement ==
+  base   M3x10: tip z=12.0, receivers from z=5.0 -> 7.0 mm, pilot 8.0, lug top z=20.0
+  speaker M3x8: through 1.0 flange -> 7.0 mm, pilot 8.3, skin 1.2 mm
+  plinth M3x20: 5.0 mm into the base plate, pilot 6.0
+
+0 failure(s)
