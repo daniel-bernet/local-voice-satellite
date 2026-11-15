@@ -11,6 +11,10 @@ This is a **portfolio showcase and a reference design**, not a kit. It documents
 
 I wanted a voice assistant for my home that works like a smart speaker but stays private: no always-listening cloud device, and no recordings leaving the house. Home Assistant's voice pipeline makes that possible with local speech-to-text and text-to-speech. What was missing was a satellite I understood end to end and could repair, so I built one.
 
+## Result
+
+The V2 satellite works. It hears "Hey Jarvis" on the device, Home Assistant turns the request into text and the answer into speech locally, and the answer plays on the satellite while the LED ring shows each stage. Simple requests take about 5–10 s end to end, down from about a minute right after assembly. I haven't measured the stage times yet. What V2 taught me (a mic mount that broke under the wire forces, speaker hiss, LEDs without a level shifter) went into a V3 PCB and case, which are designed and checked in code only, not built.
+
 ## Status
 
 | Part | Status |
@@ -75,6 +79,30 @@ The diagram shows roles, not machines. More in [docs/architecture.md](docs/archi
 
 Wiring diagram and pin table: [hardware/v2](hardware/v2/README.md). The V3 BOM with part numbers is in [hardware/v3-pcb/bom.csv](hardware/v3-pcb/bom.csv).
 
+## Build and run
+
+Tested with Python 3.12 and ESPHome 2026.10.2, from the repository root. The generators rewrite the committed outputs in place.
+
+```bash
+# Firmware: validate the V2 config. In secrets.yaml, replace the placeholder API key with a
+# generated one (the command is in the file) and fill in your Wi-Fi details.
+pip install esphome
+cp firmware/esphome/secrets.example.yaml firmware/esphome/secrets.yaml
+esphome config firmware/esphome/voice-satellite-v2.example.yaml
+
+# V3 PCB (unverified design): regenerate, then read the outputs back with independent parsers
+pip install shapely numpy matplotlib gerbonara kiutils
+python3 hardware/v3-pcb/source/satellite_v3_pcb.py
+python3 hardware/v3-pcb/source/check_outputs.py
+
+# Cases: regenerate and check (V3 reads the board geometry written by the PCB step)
+pip install build123d trimesh pyvista networkx
+python3 enclosure/v2/source/case_v2.py && python3 enclosure/v2/source/check_case_v2.py
+python3 enclosure/v3/source/case_v3.py && python3 enclosure/v3/source/check_case_v3.py
+```
+
+Flashing and adopting the device in Home Assistant: [firmware/esphome](firmware/esphome/README.md). Printing and assembly: [enclosure](enclosure/README.md) and [build notes](docs/build-notes.md). What reproduces exactly and what doesn't: [enclosure](enclosure/README.md#regenerate) and [V3 PCB](hardware/v3-pcb/README.md#files).
+
 ## Repository map
 
 | Path | What's in it |
@@ -96,9 +124,9 @@ This is open source and permissive: you can copy, modify and sell it, as long as
 
 | What | Licence |
 |---|---|
-| Firmware configs and all code, including the PCB and CAD generators (`firmware/`, `hardware/v3-pcb/source/`, `enclosure/*/source/`) | [MIT](LICENSE) |
-| Hardware designs: PCB, KiCad project, Gerbers, BOM, STL/STEP and the wiring diagram (rest of `hardware/` and `enclosure/`) | [CERN-OHL-P-2.0](LICENSES/CERN-OHL-P-2.0.txt) |
-| Documentation and images (`README.md`, `docs/`, `images/`, renders) | [CC BY 4.0](LICENSES/CC-BY-4.0.txt) |
+| Firmware configs and all code, including the PCB and CAD generators and check scripts (`firmware/`, `hardware/v3-pcb/source/`, `enclosure/*/source/`, except Markdown files) | [MIT](LICENSE) |
+| Hardware designs: PCB, KiCad project, Gerbers, BOM, STL/STEP, check reports and the wiring diagram (rest of `hardware/` and `enclosure/`, except Markdown files and renders) | [CERN-OHL-P-2.0](LICENSES/CERN-OHL-P-2.0.txt) |
+| Documentation and images: every Markdown file (`*.md`, including the READMEs in `firmware/`, `hardware/` and `enclosure/`), `docs/`, `images/` and all renders | [CC BY 4.0](LICENSES/CC-BY-4.0.txt) |
 
 © 2026 Daniel Bernet. If you build on this, a credit or a link back is appreciated. GitHub's "Cite this repository" uses [CITATION.cff](CITATION.cff).
 
@@ -109,5 +137,9 @@ These are used or referenced, not bundled, and they keep their own licences:
 - [micro_wake_word models](https://github.com/esphome/micro-wake-word-models): the `hey_jarvis` model is downloaded by ESPHome at build time (Apache-2.0).
 - [Home Assistant](https://www.home-assistant.io/) with its Wyoming integration, Whisper and Piper: the voice pipeline on the server side.
 - [KiCad](https://www.kicad.org/): opens the generated project. No KiCad library files are included; the footprints in `satellite.pretty` are re-created from datasheet dimensions by the generator.
-- Python tools used to generate and check the designs: [build123d](https://github.com/gumyr/build123d), shapely, gerbonara, kiutils, trimesh, pyvista, cairosvg.
+- Python tools used to generate and check the designs: [build123d](https://github.com/gumyr/build123d), shapely, numpy, matplotlib, gerbonara, kiutils, trimesh, networkx, pyvista, cairosvg.
 - Component datasheets are linked from [hardware/v3-pcb/README.md](hardware/v3-pcb/README.md#datasheets), not copied.
+
+## Project page
+
+The write-up of this project is on my site: [dbernet.ch/projects/local-voice-satellite](https://dbernet.ch/projects/local-voice-satellite/).
