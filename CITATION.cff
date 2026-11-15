@@ -7,7 +7,7 @@ authors:
   - family-names: Bernet
     given-names: Daniel
 repository-code: "https://github.com/daniel-bernet/local-voice-satellite"
-url: "https://github.com/daniel-bernet/local-voice-satellite"
+url: "https://dbernet.ch/projects/local-voice-satellite/"
 license:
   - MIT
   - CERN-OHL-P-2.0
