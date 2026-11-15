@@ -2,7 +2,6 @@
 
 These are the key points for rebuilding the V2 satellite (and for anyone attempting V3), written as notes rather than a tutorial. They assume you can solder, read a datasheet and drive a slicer.
 
-![V2 opened like a book](../images/v2-open-case.jpg)
 <!-- PHOTO NEEDED: images/v2-open-case.jpg: the V2 case opened like a book (shell upside down next to the base, still joined by the mic and speaker wires), perfboard, speaker and plinth visible; top-down, plain background, no screens or documents in frame. -->
 
 ## Electronics (V2)

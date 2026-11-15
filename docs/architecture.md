@@ -63,7 +63,6 @@ Observed end to end for simple requests (time, weather): about **5–10 s**. Rig
 | 4 error | two red blinks | `on_error` | – |
 | 5 disconnected | dim red breathing | API client disconnected | – |
 
-![LED ring while thinking](../images/v2-ring-thinking.jpg)
 <!-- PHOTO NEEDED: images/v2-ring-thinking.jpg: the V2 satellite in a dim room with the amber comet ("thinking") visible in the light band, side view at table height, dark plain background, no screens or other light sources in frame. -->
 
 The whole interaction has a hard limit of 180 s, after which the firmware stops the pipeline. A guard returns to idle 3 s after the pipeline ends if no answer audio is playing. The config is in [firmware/esphome](../firmware/esphome/).

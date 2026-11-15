@@ -11,7 +11,7 @@ Both cases are parametric [build123d](https://github.com/gumyr/build123d) code. 
 
 ![V2 x-ray render](v2/renders/render_xray.png)
 
-![V2 printed parts (temporary render, replaced by a photo)](v2/renders/render_print_parts.png)
+![Render of the printed V2 parts from the CAD model, not a photo (a photo will replace it)](v2/renders/render_print_parts.png)
 <!-- PHOTO NEEDED: images/v2-printed-parts.jpg: the printed V2 parts laid out flat (shell, base plate, clear plinth, TPU gaskets, feet, grommet) on a plain surface, top-down, even light, nothing else in frame. Replaces the render above. -->
 
 **Size:** 111.2 × 85.6 × 51.4 mm case, 71.4 mm tall including the light-band plinth and the feet.

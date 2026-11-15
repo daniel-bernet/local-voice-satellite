@@ -2,7 +2,7 @@
 
 A DIY voice satellite for [Home Assistant](https://www.home-assistant.io/): an ESP32-S3 with an I²S microphone, an I²S amplifier and an LED ring in a 3D-printed case. The wake word runs on the device. Speech-to-text and text-to-speech run on my own server. No audio goes to a cloud service.
 
-![Satellite V2 render (temporary, replaced by a photo)](enclosure/v2/renders/render_exterior.png)
+![Render of the Satellite V2 CAD model, not a photo (a photo of the built satellite will replace it)](enclosure/v2/renders/render_exterior.png)
 <!-- PHOTO NEEDED: images/v2-hero.jpg: the assembled V2 satellite on a plain desk, LED ring lit amber, 3/4 front view from slightly above, neutral background, nothing else in frame. Replaces the render above. -->
 
 This is a **portfolio showcase and a reference design**, not a kit. It documents one working build and the reasoning behind it: what I chose, why, what broke and what I'd do differently. It's meant for people who want to build something similar and are happy to make their own decisions. It is not a step-by-step tutorial.

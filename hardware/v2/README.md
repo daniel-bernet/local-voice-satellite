@@ -2,7 +2,7 @@
 
 **Status: built and working.** Perfboard electronics in the [V2 enclosure](../../enclosure/v2/), running the [V2 firmware](../../firmware/esphome/voice-satellite-v2.example.yaml).
 
-![Perfboard (temporary render, replaced by a photo)](../../enclosure/v2/renders/render_xray.png)
+![X-ray render of the V2 CAD model with the perfboard inside, not a photo (a photo will replace it)](../../enclosure/v2/renders/render_xray.png)
 <!-- PHOTO NEEDED: images/v2-perfboard.jpg: top view of the perfboard on the base plate (devkit, amp, PD trigger board, R1-R3, C2, wire colours readable), shell removed, even light, no devkit MAC/serial sticker readable. Replaces the render above. -->
 
 ## Wiring diagram

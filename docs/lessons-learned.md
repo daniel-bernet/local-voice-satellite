@@ -6,7 +6,6 @@ These are honest and specific: what went wrong, what I changed, and what is stil
 
 **What happened:** in the V2 case, the round INMP441 board sits in a ring on the inside of the front wall. Two printed pins pass through the board's edge notches and are melted over (heat-staked) to hold it. Six wires leave the mic board and run to the perfboard. The melted-down plastic pins didn't take the force of those wire connections and broke off, and I had to glue the mic in.
 
-![V2 mic in the front-wall ring](../images/v2-mic-mount.jpg)
 <!-- PHOTO NEEDED: images/v2-mic-mount.jpg: close-up of the mic board in the front-wall ring of the open V2 shell, showing the broken stake pins and the glue; shell upside down, lit from the side, only the device in frame. -->
 
 **What I changed (V3 design):** the mic module solders onto a small **carrier PCB**. The carrier is delivered as a breakaway on the same panel as the main board, and it screws into two heat-set inserts on the front wall. A JST-PH pigtail connects it to the main board, so the wire forces land on a screwed PCB and a connector instead of on two thin plastic pins.
