@@ -88,7 +88,7 @@ Wiring diagram and pin table: [hardware/v2](hardware/v2/README.md). The V3 BOM w
 
 ## How it was built
 
-I specified, measured, printed, soldered, assembled and tested the hardware myself. The enclosure and the V3 PCB were designed **as code with AI assistance** (Claude by Anthropic): I described requirements and constraints, measured the real parts, reviewed every iteration and decided between options, and the AI wrote the CAD, PCB and firmware code and the check scripts. These docs were also drafted with AI assistance from my project notes and reviewed by me. The full split of who did what is in [docs/how-it-was-built.md](docs/how-it-was-built.md).
+This project was built with AI assistance (Claude by Anthropic). I defined the requirements, chose the components, measured the real parts, specified and reviewed the designs, and printed, soldered, assembled and tested the hardware. The enclosure and the V3 PCB were generated **as code with AI assistance**, and the firmware, the wiring and soldering guides, the wiring diagram and the doc drafts were written with AI support. I reviewed, adapted and tested all of it. The full split of who did what is in [docs/how-it-was-built.md](docs/how-it-was-built.md).
 
 ## Licence
 

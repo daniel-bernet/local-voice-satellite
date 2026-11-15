@@ -1,23 +1,26 @@
 # How it was built
 
-The hardware design files in this repository were produced **as code, with AI assistance**. I want to be plain about who did what, because "AI-designed" can mean anything from "I typed one prompt" to "I used autocomplete".
+This project was built with AI assistance (Claude, by Anthropic). I want to be plain about who did what, because "AI-assisted" can mean anything from "I typed one prompt" to "I used autocomplete".
+
+In short: I defined the requirements, chose the components, specified and reviewed the designs, and printed, soldered, assembled and tested the hardware. The PCB and the case were generated as code, and the firmware, the guides, the wiring diagram and the doc drafts were written with AI support. I reviewed, adapted and tested all of it, with my own input at every step.
 
 ## What I did
 
 - **Defined the project:** a private, local voice satellite for Home Assistant, plus its requirements and constraints (printer, materials, parts on hand, no visible screws, hand-soldering only).
 - **Chose the core components** (ESP32-S3 N16R8, INMP441, MAX98357A, speaker, LED strip, USB-C PD trigger) after my own web research, and ordered them.
 - **Measured the real parts.** Every dimension marked *MEASURED* in the CAD source came from me. The *EST* values are estimates from photos.
-- **Reviewed every iteration** and made the calls: millimetre adjustments, rejected options, choices between trade-offs (for example: driving the LEDs without a level shifter, the mic carrier PCB after the stake pins broke, solder pads instead of a speaker connector).
+- **Specified and reviewed every design iteration** and made the calls: millimetre adjustments, rejected options, choices between trade-offs (for example: driving the LEDs without a level shifter, the mic carrier PCB after the stake pins broke, solder pads instead of a speaker connector).
 - **Printed** every part on my Bambu Lab A1 mini, including the test prints that found the unreachable V1.2 speaker screws.
 - **Soldered, assembled and tested** the V2 electronics, following a staged power-up test plan.
-- **Set up** ESPHome and the Home Assistant voice pipeline, and flashed and run the firmware.
+- **Set up** ESPHome and the Home Assistant voice pipeline, and flashed, ran and adjusted the firmware.
 
-## What was generated with AI assistance (Claude, by Anthropic)
+## What was written with AI assistance, then reviewed, adapted and tested by me
 
-- **Enclosure CAD:** the build123d source for the V2 and V3 cases and their check scripts (collisions, gasket coverage, assembly sweeps, tool access, printability).
+- **Enclosure CAD:** the build123d source for the V2 and V3 cases and their check scripts (collisions, gasket coverage, assembly sweeps, tool access, printability). The V2 case was printed and assembled; the V3 case has not been printed.
 - **V3 PCB:** the `pcbkit.py` toolkit (footprints from datasheet numbers, an A* grid router, zone fills, a geometric DRC, KiCad 9 and Gerber writers) and the board script. There was no KiCad in the AI's environment, so the board is generated as files that KiCad opens. It has **not** been opened, checked or fabricated in KiCad yet.
-- **Firmware:** the current ESPHome configuration, including the amp power gating and the LED state machine, was written with AI assistance and then validated and flashed by me. The V3 config is an AI-written draft.
-- **Documentation:** the wiring and soldering guides I built from, the wiring diagram (SVG written as code) and these docs, drafted from my project notes and reviewed by me.
+- **Firmware:** the ESPHome configuration, including the amp power gating and the LED state machine. I validated, flashed and tested the V2 config on the satellite. The V3 config is a draft and has never run, because the board doesn't exist.
+- **Guides and diagram:** the wiring and soldering guides I built V2 from, and the wiring diagram (an SVG written as code).
+- **Documentation:** these docs, drafted from my project notes and reviewed and corrected by me.
 - **This repository's generated outputs** (KiCad project, Gerbers, BOM, STL/STEP, renders) were regenerated from the source while the repo was prepared.
 
 ## What the automated checks do and don't prove
