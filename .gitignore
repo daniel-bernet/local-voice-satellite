@@ -5,3 +5,14 @@ __pycache__/
 .esphome/
 # never commit real secrets
 secrets.yaml
+# Python virtual environments
+venv/
+.venv/
+# KiCad user files (created when the project is opened)
+*.kicad_prl
+*-backups/
+fp-info-cache
+*.lck
+~*
+# OS files
+.DS_Store
