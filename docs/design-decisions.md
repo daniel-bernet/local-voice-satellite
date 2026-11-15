@@ -25,7 +25,7 @@ Each decision below comes with the reason behind it. Where I actually weighed al
 ## 4. Local speech-to-text and text-to-speech
 
 **Decision:** Whisper for speech-to-text and Piper for text-to-speech, both connected to Home Assistant through the Wyoming protocol. Speech-to-text runs on the CPU.
-**Why:** both run locally with no cloud account. **Alternative considered:** Whisper used to run on the server's GPU. I moved it to the CPU so the GPU stays free for the planned local LLM. That change was made *before* the latency measurements in [lessons learned](lessons-learned.md#2-the-first-answers-took-about-a-minute), so it doesn't explain the later improvement.
+**Why:** both run locally with no cloud account.
 
 ## 5. Amplifier power gating
 

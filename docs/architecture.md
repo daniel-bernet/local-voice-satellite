@@ -38,13 +38,13 @@ sequenceDiagram
 | **Home Assistant Assist pipeline** | Home Assistant | Orchestrates one voice interaction: end-of-speech detection, STT, intent handling, TTS, and sending the answer back to the satellite's media player. |
 | **Speech-to-text** | Whisper via Wyoming | Turns the streamed audio into text. Runs on the CPU. |
 | **Built-in intents** | Home Assistant | Answers fixed commands and simple questions (time, weather, devices) locally and quickly, without any LLM. |
-| **LLM agent** | planned, local | Will take the requests the built-in intents can't match. Not connected yet. |
+| **LLM agent** | planned | Will take the requests the built-in intents can't match. Not connected yet. |
 | **Text-to-speech** | Piper via Wyoming | Turns the answer text into audio. |
 
 ## Why this split
 
 - **Wake word on the device.** The satellite only streams audio after it has heard the wake word, so nothing is sent while it's just sitting in the room. It also takes load off the server. micro_wake_word needs PSRAM, which is why the satellite uses an N16R8 ESP32-S3 (8 MB octal PSRAM).
-- **The satellite stays simple.** All the language work (STT, intents, TTS, later the LLM) lives in Home Assistant. The satellite firmware doesn't change when the pipeline does.
+- **The satellite stays simple.** All the language work (STT, intents, TTS, later the LLM step) is handled through Home Assistant. The satellite firmware doesn't change when the pipeline does.
 - **Local intents before the LLM.** Commands like "what time is it" never need a language model. The planned LLM only gets what the built-in intents can't handle, which keeps simple requests fast and predictable.
 - **One media path on the satellite.** All audio, voice answers and announcements alike, goes through one ESPHome media player. That gives exactly one place to switch the amplifier on and off.
 

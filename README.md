@@ -26,7 +26,7 @@ I wanted a voice assistant for my home that works like a smart speaker but stays
 
 ### Next steps
 - Measure the stage times (wake → end of speech → STT → intent → TTS) in Home Assistant's pipeline debug view, and only then decide what to optimise.
-- Connect a local LLM agent behind Home Assistant's built-in intents.
+- Connect an LLM agent behind Home Assistant's built-in intents.
 - Decide whether V3 gets built. If it does, start with the [must-verify list](hardware/v3-pcb/README.md#must-verify-before-ordering).
 
 ## Features
@@ -50,7 +50,7 @@ flowchart LR
     WW -- "audio after wake word<br/>(ESPHome API, encrypted)" --> HA["Home Assistant<br/>Assist pipeline"]
     HA --> STT["Speech-to-text<br/>Whisper (Wyoming)"]
     STT --> INT["Built-in intents<br/>(time, weather, devices)"]
-    INT -. "unmatched requests<br/>(planned)" .-> LLM["Local LLM agent"]
+    INT -. "unmatched requests<br/>(planned)" .-> LLM["LLM agent<br/>(planned)"]
     INT --> TTS["Text-to-speech<br/>Piper (Wyoming)"]
     LLM -.-> TTS
     TTS -- "answer audio" --> SPK

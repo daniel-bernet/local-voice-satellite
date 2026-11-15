@@ -23,7 +23,7 @@ substitutions:
 
   # --- Stage timeouts (seconds): the LEDs always fall back to idle after these.
   listen_timeout_s: "15"     # wake word -> end of speech
-  think_timeout_s: "45"      # end of speech -> first answer (local LLM can be slow)
+  think_timeout_s: "45"      # end of speech -> first answer (a future LLM step may be slower)
   respond_timeout_s: "120"   # answer playing (long answers)
   pipeline_timeout_s: "180"  # hard limit for one whole voice interaction
 

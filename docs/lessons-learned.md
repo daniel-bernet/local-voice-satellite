@@ -15,7 +15,7 @@ These are honest and specific: what went wrong, what I changed, and what is stil
 
 ## 2. The first answers took about a minute
 
-**What happened:** right after assembly, a simple question like "what time is it" took about **1 min** end to end. Home Assistant answers that kind of question with its built-in intents in a fraction of a second, so the time was being spent elsewhere in the pipeline. The LED ring narrows it down roughly: a long "breathing" phase means end of speech wasn't detected, and a long "comet" phase means speech-to-text or the answer is slow.
+**What happened:** right after assembly, a simple question like "what time is it" took about **1 min** end to end. The LED ring narrows it down roughly: a long "breathing" phase means end of speech wasn't detected, and a long "comet" phase means speech-to-text or the answer is slow.
 
 **Where it is now:** simple requests (time, weather) take about **5–10 s** end to end. I haven't measured the individual stages, so I don't know which change made the difference, and I'm not going to guess.
 
