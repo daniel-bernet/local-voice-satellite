@@ -30,8 +30,8 @@ Run on 2026-11-15 when this repository was prepared, by regenerating everything 
 | Routing | pcbkit A* router | 0 failed connections |
 | Geometric DRC: clearance 0.15 mm, copper-to-edge 0.3 mm, hole-to-hole 0.25 mm, annular ring 0.15 mm, courtyards | pcbkit (shapely) | **0 issues**. 12 notes at exactly 0.150 mm, all inside the USB-C receptacle's 0.85 mm pin field ([drc_report.txt](drc_report.txt)) |
 | Connectivity, 47 nets | pcbkit | 46 nets are one copper island each. GND is the main plane plus 5 small pad-less fill pieces on the top layer (dead copper, largest about 19 mm²). **No GND pad or track is disconnected.** KiCad recomputes all fills on "Fill all zones". |
-| Gerber read-back | gerbonara (independent parser) | all 9 layers and both drill files parse. Copper and silkscreen rendered and inspected ([renders/](renders/)). |
-| KiCad file syntax | kiutils and gerbonara's KiCad parsers | `.kicad_pcb` (82 footprints, including 8 mouse-bite holes) and `.kicad_sch` (74 symbols) parse |
+| Gerber read-back | gerbonara (independent parser), [source/check_outputs.py](source/check_outputs.py) | all 9 layers and both drill files parse (bottom paste is empty: no bottom SMD parts). Copper and silkscreen rendered and inspected ([renders/](renders/)). |
+| KiCad file syntax | kiutils, [source/check_outputs.py](source/check_outputs.py) | `.kicad_pcb` (82 footprints, including 8 mouse-bite holes) and `.kicad_sch` (74 symbols) parse |
 | Case fit | [enclosure/v3](../../enclosure/v3/) check script, using `board_for_case.json` | no collisions with the case model; the chamber gasket rim lands 100 % on the board |
 
 **Not checked:** KiCad DRC/ERC, fab DFM review, footprint accuracy against the real parts, any electrical behaviour. None of it has been built.
@@ -66,20 +66,23 @@ Run on 2026-11-15 when this repository was prepared, by regenerating everything 
 |---|---|
 | [source/pcbkit.py](source/pcbkit.py) | PCB-as-code toolkit: footprints, router, zones, DRC, KiCad 9 and Gerber writers (MIT) |
 | [source/satellite_v3_pcb.py](source/satellite_v3_pcb.py) | The board: parts, nets, placement, routing order, outputs (MIT) |
+| [source/check_outputs.py](source/check_outputs.py) | Independent read-back of the Gerbers, drill files and KiCad files (MIT) |
 | [kicad/](kicad/) | KiCad 9 project, PCB, machine-generated schematic, `satellite.pretty` footprint library |
 | [gerbers/](gerbers/) | RS-274X and Excellon (slots as G85) from the generator |
 | [bom.csv](bom.csv), [positions.csv](positions.csv) | BOM with part numbers, placement |
 | [drc_report.txt](drc_report.txt) | Output of the geometric DRC |
 | [board_for_case.json](board_for_case.json) | Outline, holes and part envelopes for the case script |
-| [renders/](renders/) | Copper overlay renders and Gerber read-back renders |
+| [renders/](renders/) | Copper overlay renders (SVG from the generator, PNG copies) and Gerber read-back renders |
 
-Regenerate everything with `pip install shapely numpy matplotlib` and then `python3 source/satellite_v3_pcb.py` (about 25 s). Router and DRC are deterministic. The KiCad files get new UUIDs on every run.
+Regenerate with `pip install shapely numpy matplotlib` and then `python3 source/satellite_v3_pcb.py` (about 25 s). It writes the KiCad project, Gerbers, drill files, BOM, positions, DRC report, `board_for_case.json` and the two SVG renders. Router and DRC are deterministic: a fresh run reproduces all of these byte for byte, except that the KiCad files get new UUIDs on every run.
+
+Repeat the read-back with `pip install gerbonara kiutils` and `python3 source/check_outputs.py`. It prints what each file parses to and writes read-back SVG renders of both sides to `build/` (git-ignored). The PNG files in [renders/](renders/) were made once from the SVGs and the read-back while this repository was prepared; no script here regenerates them.
 
 ## Datasheets
 
 Linked, not copied:
 - [ESP32-S3-WROOM-1 datasheet](https://documentation.espressif.com/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf) and the [Espressif ESP32-S3 PCB layout guide](https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/pcb-layout-design.html)
 - [GCT USB4085](https://gct.co/connector/usb4085)
-- [MAX98357A pinout](https://components101.com/ics/max98357-low-cost-pcm-3w-class-d-amplifier)
+- [MAX98357A datasheet (Analog Devices)](https://www.analog.com/media/en/technical-documentation/data-sheets/MAX98357A-MAX98357B.pdf)
 - [ICS-43434 datasheet](https://www.farnell.com/datasheets/2632666.pdf)
 - [PCBWay capabilities](https://www.pcbway.com/capabilities.html), used for the design rules
