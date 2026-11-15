@@ -67,10 +67,12 @@ For a **milky** light band rather than a see-through window, give the clear part
 ## Regenerate
 
 ```bash
-pip install build123d trimesh pyvista
+pip install build123d trimesh pyvista networkx
 python3 v2/source/case_v2.py && python3 v2/source/check_case_v2.py
 python3 ../hardware/v3-pcb/source/satellite_v3_pcb.py     # V3 needs the board geometry first
 python3 v3/source/case_v3.py && python3 v3/source/check_case_v3.py
 ```
 
-Each case writes `stl/` (print orientation), `step/` (assembly with simplified component models), `renders/`, `CHECK_REPORT.txt`, and a git-ignored `build/` folder.
+Each case writes `stl/` (print orientation), `step/` (assembly with simplified component models), `renders/`, `CHECK_REPORT.txt`, and a git-ignored `build/` folder. The renders need a display, or `PYVISTA_OFF_SCREEN=true` on a headless machine.
+
+**Reproducibility:** a fresh run reproduces every STL and both `CHECK_REPORT.txt` files byte for byte. The STEP files differ only cosmetically: a new timestamp in the header and a reordered colour/style block at the end, with the same geometry. The renders differ only in anti-aliasing, which depends on the graphics stack.
